@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, User, ArrowLeft } from "lucide-react";
+import { Loader2, User, ArrowLeft, Upload, X } from "lucide-react";
 
 interface Profile {
   id: string;
@@ -21,8 +21,10 @@ interface UserData {
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [fullName, setFullName] = useState("");
@@ -82,6 +84,107 @@ const Profile = () => {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Format tidak didukung",
+        description: "Gunakan format JPG, PNG, GIF, atau WEBP",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "File terlalu besar",
+        description: "Ukuran maksimal 2MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!userData?.userId) return;
+
+    setUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userData.userId}/${Date.now()}.${fileExt}`;
+
+      // Delete old avatar if exists
+      if (avatarUrl) {
+        const oldPath = avatarUrl.split('/avatars/')[1];
+        if (oldPath) {
+          await supabase.storage.from('avatars').remove([oldPath]);
+        }
+      }
+
+      // Upload new avatar
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      setAvatarUrl(publicUrl);
+
+      toast({
+        title: "Berhasil!",
+        description: "Avatar berhasil diupload",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Gagal upload",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!avatarUrl || !userData?.userId) return;
+
+    setUploading(true);
+
+    try {
+      const oldPath = avatarUrl.split('/avatars/')[1];
+      if (oldPath) {
+        await supabase.storage.from('avatars').remove([oldPath]);
+      }
+      setAvatarUrl("");
+
+      toast({
+        title: "Berhasil!",
+        description: "Avatar berhasil dihapus",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Gagal menghapus",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -98,7 +201,7 @@ const Profile = () => {
         .from("profiles")
         .update({
           full_name: fullName.trim() || null,
-          avatar_url: avatarUrl.trim() || null,
+          avatar_url: avatarUrl || null,
         })
         .eq("id", session.user.id);
 
@@ -175,29 +278,59 @@ const Profile = () => {
             {/* Avatar Section */}
             <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
               {/* Avatar Preview */}
-              <div className="w-20 h-20 sm:w-24 sm:h-24 border-3 border-border bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="font-brutal text-2xl sm:text-3xl text-secondary-foreground">
-                    {getInitials(fullName)}
-                  </span>
+              <div className="relative">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 border-3 border-border bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="font-brutal text-2xl sm:text-3xl text-secondary-foreground">
+                      {getInitials(fullName)}
+                    </span>
+                  )}
+                  {uploading && (
+                    <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  )}
+                </div>
+                {avatarUrl && !uploading && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveAvatar}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground border-2 border-border flex items-center justify-center hover:bg-destructive/90 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
                 )}
               </div>
               
-              {/* Avatar URL Input */}
-              <div className="space-y-2 flex-1 w-full">
-                <Label htmlFor="avatar" className="font-brutal text-xs tracking-wider">URL AVATAR</Label>
-                <Input
-                  id="avatar"
-                  type="url"
-                  placeholder="https://example.com/avatar.jpg"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  disabled={saving}
+              {/* Avatar Upload */}
+              <div className="space-y-3 flex-1 w-full">
+                <Label className="font-brutal text-xs tracking-wider">FOTO PROFIL</Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  disabled={uploading || saving}
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading || saving}
+                  className="w-full sm:w-auto"
+                >
+                  {uploading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  {uploading ? "MENGUPLOAD..." : "PILIH FOTO"}
+                </Button>
                 <p className="text-xs font-mono text-muted-foreground">
-                  Masukkan URL gambar untuk avatar Anda
+                  Format: JPG, PNG, GIF, WEBP. Maks 2MB.
                 </p>
               </div>
             </div>
@@ -237,7 +370,7 @@ const Profile = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button type="submit" disabled={saving} className="w-full sm:w-auto">
+              <Button type="submit" disabled={saving || uploading} className="w-full sm:w-auto">
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 SIMPAN
               </Button>
@@ -245,7 +378,7 @@ const Profile = () => {
                 type="button"
                 variant="outline"
                 onClick={() => navigate("/")}
-                disabled={saving}
+                disabled={saving || uploading}
                 className="w-full sm:w-auto"
               >
                 BATAL
