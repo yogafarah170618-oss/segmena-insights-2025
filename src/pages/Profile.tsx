@@ -279,7 +279,7 @@ const Profile = () => {
             {/* Avatar Section */}
             <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
               {/* Avatar Preview */}
-              <div className="relative sm:mr-6 md:mr-8">
+              <div className="relative">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 border-3 border-border bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
                   {avatarUrl ? (
                     <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />
@@ -306,7 +306,7 @@ const Profile = () => {
               </div>
               
               {/* Avatar Upload */}
-              <div className="space-y-3 flex-1 w-full pl-6 md:pl-8">
+              <div className="space-y-3 flex-1 w-full">
                 <Label className="font-brutal text-xs tracking-wider">FOTO PROFIL</Label>
                 <input
                   ref={fileInputRef}
