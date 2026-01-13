@@ -329,22 +329,24 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section className="py-8 sm:py-20 border-t-3 border-border bg-foreground text-background">
-        <div className="px-4 sm:px-6 text-center">
-          <h2 className="text-xl sm:text-4xl md:text-6xl font-brutal mb-4 sm:mb-8">
-            MULAI SEKARANG
-          </h2>
-          <Button
-            size="lg"
-            onClick={() => navigate("/auth")}
-            className="bg-secondary text-secondary-foreground text-xs sm:text-lg px-6 sm:px-12 py-3 sm:py-6 hover:bg-secondary/90 w-full sm:w-auto max-w-xs"
-          >
-            DAFTAR GRATIS
-            <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-          </Button>
-        </div>
-      </section>
+      {/* Footer CTA - Only show when not logged in */}
+      {!isLoggedIn && (
+        <section className="py-8 sm:py-20 border-t-3 border-border bg-foreground text-background">
+          <div className="px-4 sm:px-6 text-center">
+            <h2 className="text-xl sm:text-4xl md:text-6xl font-brutal mb-4 sm:mb-8">
+              MULAI SEKARANG
+            </h2>
+            <Button
+              size="lg"
+              onClick={() => navigate("/auth")}
+              className="bg-secondary text-secondary-foreground text-xs sm:text-lg px-6 sm:px-12 py-3 sm:py-6 hover:bg-secondary/90 w-full sm:w-auto max-w-xs"
+            >
+              DAFTAR GRATIS
+              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
+            </Button>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
