@@ -12,6 +12,23 @@ const Landing = () => {
     avgTransaction: "Rp 247K",
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
+
+  // Revenue data for chart
+  const revenueData = [
+    { month: 'Jan', revenue: 58.5, x: 0, y: 60 },
+    { month: 'Feb', revenue: 62.0, x: 23, y: 45 },
+    { month: 'Mar', revenue: 68.5, x: 47, y: 55 },
+    { month: 'Apr', revenue: 71.0, x: 70, y: 30 },
+    { month: 'Mei', revenue: 69.5, x: 93, y: 40 },
+    { month: 'Jun', revenue: 72.0, x: 117, y: 15 },
+    { month: 'Jul', revenue: 74.5, x: 140, y: 25 },
+    { month: 'Agu', revenue: 78.0, x: 163, y: 10 },
+    { month: 'Sep', revenue: 75.5, x: 187, y: 20 },
+    { month: 'Okt', revenue: 79.0, x: 210, y: 5 },
+    { month: 'Nov', revenue: 68.5, x: 233, y: 12 },
+    { month: 'Des', revenue: 70.5, x: 256, y: 8 },
+  ];
 
   useEffect(() => {
     checkAuthAndLoadData();
@@ -221,21 +238,88 @@ const Landing = () => {
                     </div>
                     <span className="text-[8px] sm:text-[10px] font-mono text-green-500">↑ 23%</span>
                   </div>
-                  <div className="flex items-end gap-1 h-20 sm:h-28">
-                    {[
-                      { h: 40, m: 'Jan' }, { h: 55, m: 'Feb' }, { h: 45, m: 'Mar' },
-                      { h: 70, m: 'Apr' }, { h: 60, m: 'Mei' }, { h: 85, m: 'Jun' },
-                      { h: 75, m: 'Jul' }, { h: 90, m: 'Agu' }, { h: 80, m: 'Sep' },
-                      { h: 95, m: 'Okt' }, { h: 88, m: 'Nov' }, { h: 100, m: 'Des' }
-                    ].map((bar, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                        <div 
-                          className="w-full bg-secondary border border-border hover:bg-accent transition-colors"
-                          style={{ height: `${bar.h}%` }}
-                        />
-                        <span className="text-[5px] sm:text-[7px] font-mono opacity-50">{bar.m}</span>
+                  {/* SVG Line Chart */}
+                  <div className="h-20 sm:h-28 relative" onMouseLeave={() => setHoveredPoint(null)}>
+                    <svg viewBox="0 0 280 100" className="w-full h-full" preserveAspectRatio="none">
+                      {/* Grid lines */}
+                      <line x1="0" y1="25" x2="280" y2="25" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.3" />
+                      <line x1="0" y1="50" x2="280" y2="50" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.3" />
+                      <line x1="0" y1="75" x2="280" y2="75" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.3" />
+                      
+                      {/* Area fill under the line */}
+                      <defs>
+                        <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#EAB308" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="#EAB308" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d="M0,60 L23,45 L47,55 L70,30 L93,40 L117,15 L140,25 L163,10 L187,20 L210,5 L233,12 L256,8 L280,100 L0,100 Z"
+                        fill="url(#areaGradient)"
+                      />
+                      
+                      {/* Line chart path */}
+                      <path
+                        d="M0,60 L23,45 L47,55 L70,30 L93,40 L117,15 L140,25 L163,10 L187,20 L210,5 L233,12 L256,8"
+                        fill="none"
+                        stroke="#EAB308"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      
+                      {/* Interactive data points */}
+                      {revenueData.map((point, i) => (
+                        <g key={i}>
+                          {/* Larger invisible hit area for easier hovering */}
+                          <circle
+                            cx={point.x}
+                            cy={point.y}
+                            r="12"
+                            fill="transparent"
+                            className="cursor-pointer"
+                            onMouseEnter={() => setHoveredPoint(i)}
+                          />
+                          {/* Visible point */}
+                          <circle
+                            cx={point.x}
+                            cy={point.y}
+                            r={hoveredPoint === i ? 5 : 3}
+                            fill="#EAB308"
+                            stroke={hoveredPoint === i ? "#fff" : "none"}
+                            strokeWidth="2"
+                            className="transition-all duration-200 pointer-events-none"
+                          />
+                        </g>
+                      ))}
+                    </svg>
+                    
+                    {/* Tooltip */}
+                    {hoveredPoint !== null && (
+                      <div 
+                        className="absolute z-10 bg-card border-2 border-border shadow-brutal px-2 py-1 pointer-events-none transform -translate-x-1/2 -translate-y-full"
+                        style={{
+                          left: `${(revenueData[hoveredPoint].x / 280) * 100}%`,
+                          top: `${(revenueData[hoveredPoint].y / 100) * 100}%`,
+                          marginTop: '-8px'
+                        }}
+                      >
+                        <div className="text-[9px] sm:text-[11px] font-brutal text-foreground">{revenueData[hoveredPoint].month}</div>
+                        <div className="text-[8px] sm:text-[10px] font-mono text-secondary">Rp {revenueData[hoveredPoint].revenue} Jt</div>
                       </div>
-                    ))}
+                    )}
+                    
+                    {/* Month labels */}
+                    <div className="absolute bottom-0 left-0 right-0 flex justify-between px-0">
+                      {revenueData.map((data, i) => (
+                        <span 
+                          key={i} 
+                          className={`text-[5px] sm:text-[7px] font-mono transition-all duration-200 ${hoveredPoint === i ? 'opacity-100 text-secondary font-bold' : 'opacity-50'}`}
+                        >
+                          {data.month}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div className="mt-2 pt-2 border-t border-border/50">
                     <div className="text-[8px] sm:text-[10px] font-mono opacity-60">Total Revenue 2024</div>
