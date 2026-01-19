@@ -1,8 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Target, Zap, TrendingUp, Users, Crown, Heart, AlertTriangle, Sparkles, Upload, PieChart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+
+type RevenueDatum = { month: string; revenue: number };
+
+const CHART = {
+  w: 280,
+  h: 100,
+  padX: 10,
+  topY: 8,
+  bottomY: 72,
+} as const;
+
+const REVENUE_DATA: RevenueDatum[] = [
+  { month: "Jan", revenue: 58.5 },
+  { month: "Feb", revenue: 62.0 },
+  { month: "Mar", revenue: 68.5 },
+  { month: "Apr", revenue: 71.0 },
+  { month: "Mei", revenue: 69.5 },
+  { month: "Jun", revenue: 72.0 },
+  { month: "Jul", revenue: 74.5 },
+  { month: "Agu", revenue: 78.0 },
+  { month: "Sep", revenue: 75.5 },
+  { month: "Okt", revenue: 79.0 },
+  { month: "Nov", revenue: 68.5 },
+  { month: "Des", revenue: 70.5 },
+];
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -14,20 +39,36 @@ const Landing = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
 
-  // Revenue data for chart
-  const revenueData = [
-    { month: 'Jan', revenue: 58.5, x: 0, y: 60 },
-    { month: 'Feb', revenue: 62.0, x: 23, y: 45 },
-    { month: 'Mar', revenue: 68.5, x: 47, y: 55 },
-    { month: 'Apr', revenue: 71.0, x: 70, y: 30 },
-    { month: 'Mei', revenue: 69.5, x: 93, y: 40 },
-    { month: 'Jun', revenue: 72.0, x: 117, y: 15 },
-    { month: 'Jul', revenue: 74.5, x: 140, y: 25 },
-    { month: 'Agu', revenue: 78.0, x: 163, y: 10 },
-    { month: 'Sep', revenue: 75.5, x: 187, y: 20 },
-    { month: 'Okt', revenue: 79.0, x: 210, y: 5 },
-    { month: 'Nov', revenue: 68.5, x: 233, y: 12 },
-    { month: 'Des', revenue: 70.5, x: 256, y: 8 },
+  const points = useMemo(() => {
+    const values = REVENUE_DATA.map((d) => d.revenue);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = Math.max(1e-6, max - min);
+
+    const xStart = CHART.padX;
+    const xEnd = CHART.w - CHART.padX;
+
+    return REVENUE_DATA.map((d, i) => {
+      const t = REVENUE_DATA.length === 1 ? 0 : i / (REVENUE_DATA.length - 1);
+      const x = xStart + t * (xEnd - xStart);
+      const y =
+        CHART.topY +
+        ((max - d.revenue) / range) * (CHART.bottomY - CHART.topY);
+
+      return { ...d, x, y };
+    });
+  }, []);
+
+  const linePath = points
+    .map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`)
+    .join(" ");
+
+  const areaPath = `${linePath} L${points[points.length - 1].x},${CHART.h} L${points[0].x},${CHART.h} Z`;
+
+  const gridYs = [
+    CHART.topY + (CHART.bottomY - CHART.topY) * 0.25,
+    CHART.topY + (CHART.bottomY - CHART.topY) * 0.5,
+    CHART.topY + (CHART.bottomY - CHART.topY) * 0.75,
   ];
 
   useEffect(() => {
@@ -93,185 +134,185 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen text-foreground overflow-x-hidden relative">
+      {/* Background decoration orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="blur-orb blur-orb-primary w-96 h-96 -top-48 -left-48" />
+        <div className="blur-orb blur-orb-secondary w-80 h-80 top-1/4 -right-40" />
+        <div className="blur-orb blur-orb-accent w-72 h-72 bottom-1/4 -left-36" />
+        <div className="blur-orb blur-orb-primary w-64 h-64 -bottom-32 right-1/4" />
+      </div>
 
       {/* Hero Section */}
-      <section className="min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center py-6 sm:py-20 px-4 sm:px-6">
+      <section className="min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center py-6 sm:py-20 px-4 sm:px-6 relative z-10">
         <div className="w-full max-w-5xl mx-auto">
           {/* Main Title */}
-          <div className="mb-6 sm:mb-12 text-center">
-            <h1 className="text-[2.5rem] leading-[0.9] sm:text-7xl md:text-8xl lg:text-[10rem] font-brutal tracking-tight mb-3 sm:mb-6">
+          <div className="mb-6 sm:mb-12 text-center animate-fade-in">
+            <h1 className="text-display gradient-text mb-3 sm:mb-6">
               SEGMENA
             </h1>
-            <div className="inline-block bg-secondary px-3 sm:px-6 py-1 sm:py-2 border-3 border-border shadow-brutal -rotate-2 mb-4 sm:mb-8">
-              <span className="font-brutal text-secondary-foreground text-[10px] sm:text-base md:text-xl">
-                CUSTOMER INTELLIGENCE
+            <div className="inline-block soft-badge mb-4 sm:mb-8">
+              <span className="text-sm sm:text-base">
+                Customer Intelligence Platform
               </span>
             </div>
-            <p className="text-xs sm:text-base md:text-xl font-mono max-w-2xl mx-auto mb-6 sm:mb-12 leading-relaxed">
+            <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto mb-6 sm:mb-12 leading-relaxed">
               Platform Customer Intelligence untuk UMKM. Segmentasi otomatis, insight siap pakai, mudah digunakan.
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center mb-6 sm:mb-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center mb-6 sm:mb-16 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <Button
               size="lg"
+              variant="gradient"
               onClick={() => navigate("/upload")}
-              className="text-xs sm:text-base md:text-lg px-5 sm:px-10 py-3 sm:py-6 w-full sm:w-auto"
+              className="text-sm sm:text-base px-6 sm:px-10 py-3 sm:py-6 w-full sm:w-auto"
             >
               Upload Data
               <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
             <Button
               size="lg"
-              variant="outline"
+              variant="glass"
               onClick={() => navigate("/dashboard")}
-              className="text-xs sm:text-base md:text-lg px-5 sm:px-10 py-3 sm:py-6 w-full sm:w-auto"
+              className="text-sm sm:text-base px-6 sm:px-10 py-3 sm:py-6 w-full sm:w-auto"
             >
               Try Demo
             </Button>
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-4xl mx-auto">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-4xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             {[
-              { label: "CUSTOMERS", value: stats.totalCustomers },
-              { label: "SEGMENTS", value: stats.activeSegments },
-              { label: "AVG. TRX", value: stats.avgTransaction },
+              { label: "Customers", value: stats.totalCustomers, color: "primary" },
+              { label: "Segments", value: stats.activeSegments, color: "secondary" },
+              { label: "Avg. Transaction", value: stats.avgTransaction, color: "accent" },
             ].map((stat, i) => (
               <div 
                 key={i} 
-                className={`border-3 border-border p-2 sm:p-4 md:p-6 bg-card shadow-brutal ${
-                  i === 1 ? 'bg-secondary text-secondary-foreground' : ''
-                }`}
+                className="glass-card p-3 sm:p-6 text-center glass-hover"
               >
-                <div className="text-[8px] sm:text-[10px] md:text-xs font-mono mb-0.5 sm:mb-2 opacity-70 truncate">{stat.label}</div>
-                <div className="text-sm sm:text-xl md:text-3xl font-brutal truncate">{stat.value}</div>
+                <div className="text-caption mb-1 sm:mb-2">{stat.label}</div>
+                <div className={`text-lg sm:text-3xl font-bold ${stat.color === 'primary' ? 'text-primary' : stat.color === 'secondary' ? 'text-secondary' : 'text-accent'}`}>
+                  {stat.value}
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Dashboard Preview - Redesigned for clarity */}
-          <div className="mt-6 sm:mt-16 border-3 border-border bg-card shadow-brutal-lg overflow-hidden">
+          {/* Dashboard Preview */}
+          <div className="mt-6 sm:mt-16 glass-card overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             {/* Window Header */}
-            <div className="flex items-center justify-between bg-foreground text-background px-3 sm:px-4 py-2 sm:py-3">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-accent"></div>
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-secondary"></div>
-                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500"></div>
+            <div className="flex items-center justify-between bg-gradient-to-r from-primary/10 to-secondary/10 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-accent/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-secondary/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                 </div>
-                <span className="font-mono text-[10px] sm:text-sm font-bold">SEGMENA DASHBOARD</span>
+                <span className="text-sm sm:text-base font-semibold">Segmena Dashboard</span>
               </div>
-              <span className="font-mono text-[8px] sm:text-xs opacity-70">v1.0</span>
+              <span className="text-caption">v1.0</span>
             </div>
             
-            <div className="p-3 sm:p-6">
-              {/* Step indicator - Shows the flow */}
-              <div className="mb-4 sm:mb-6 p-2 sm:p-3 bg-secondary/20 border-2 border-secondary">
-                <div className="flex items-center gap-2 sm:gap-4 justify-center flex-wrap">
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-secondary text-secondary-foreground flex items-center justify-center font-brutal text-xs">1</div>
-                    <span className="text-[9px] sm:text-xs font-mono">Upload CSV</span>
-                  </div>
-                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 opacity-50" />
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-secondary text-secondary-foreground flex items-center justify-center font-brutal text-xs">2</div>
-                    <span className="text-[9px] sm:text-xs font-mono">Analisis Otomatis</span>
-                  </div>
-                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 opacity-50" />
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <div className="w-5 h-5 sm:w-6 sm:h-6 bg-secondary text-secondary-foreground flex items-center justify-center font-brutal text-xs">3</div>
-                    <span className="text-[9px] sm:text-xs font-mono">Lihat Insight</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Segment Cards with Icons & Descriptions */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="border-2 border-border p-2 sm:p-4 bg-background hover:bg-accent/10 transition-colors">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-                    <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
-                    <span className="text-[9px] sm:text-xs font-brutal">CHAMPIONS</span>
-                  </div>
-                  <div className="text-lg sm:text-2xl font-brutal text-accent">312</div>
-                  <div className="text-[7px] sm:text-[9px] font-mono opacity-60 mt-0.5">Pelanggan terbaik</div>
-                </div>
-                
-                <div className="border-2 border-border p-2 sm:p-4 bg-background hover:bg-secondary/10 transition-colors">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-foreground" />
-                    <span className="text-[9px] sm:text-xs font-brutal">LOYAL</span>
-                  </div>
-                  <div className="text-lg sm:text-2xl font-brutal">428</div>
-                  <div className="text-[7px] sm:text-[9px] font-mono opacity-60 mt-0.5">Sering berbelanja</div>
-                </div>
-                
-                <div className="border-2 border-border p-2 sm:p-4 bg-background hover:bg-destructive/10 transition-colors">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-                    <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-destructive" />
-                    <span className="text-[9px] sm:text-xs font-brutal">AT RISK</span>
-                  </div>
-                  <div className="text-lg sm:text-2xl font-brutal text-destructive">156</div>
-                  <div className="text-[7px] sm:text-[9px] font-mono opacity-60 mt-0.5">Perlu perhatian</div>
-                </div>
-                
-                <div className="border-2 border-border p-2 sm:p-4 bg-background hover:bg-green-500/10 transition-colors">
-                  <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
-                    <span className="text-[9px] sm:text-xs font-brutal">NEW</span>
-                  </div>
-                  <div className="text-lg sm:text-2xl font-brutal text-green-500">351</div>
-                  <div className="text-[7px] sm:text-[9px] font-mono opacity-60 mt-0.5">Pelanggan baru</div>
-                </div>
-              </div>
-
-              {/* Visual Charts Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {/* Revenue Chart with Labels */}
-                <div className="border-2 border-border p-3 sm:p-4 bg-background">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-secondary" />
-                      <span className="text-[10px] sm:text-xs font-brutal">REVENUE TREND</span>
+            <div className="p-4 sm:p-8">
+              {/* Step indicator */}
+              <div className="mb-6 sm:mb-8 p-4 sm:p-5 glass rounded-xl">
+                <div className="flex items-center gap-3 sm:gap-6 justify-center flex-wrap">
+                  {[
+                    { step: 1, label: "Upload CSV" },
+                    { step: 2, label: "Analisis Otomatis" },
+                    { step: 3, label: "Lihat Insight" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 sm:gap-3">
+                      {i > 0 && <ArrowRight className="w-4 h-4 text-muted-foreground hidden sm:block" />}
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-primary to-secondary text-white flex items-center justify-center text-sm font-semibold">
+                          {item.step}
+                        </div>
+                        <span className="text-xs sm:text-sm font-medium">{item.label}</span>
+                      </div>
                     </div>
-                    <span className="text-[8px] sm:text-[10px] font-mono text-green-500">↑ 23%</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Segment Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                {[
+                  { icon: Crown, label: "Champions", value: "312", color: "text-amber-500", bg: "from-amber-500/20 to-amber-500/5", desc: "Pelanggan terbaik" },
+                  { icon: Heart, label: "Loyal", value: "428", color: "text-pink-500", bg: "from-pink-500/20 to-pink-500/5", desc: "Sering berbelanja" },
+                  { icon: AlertTriangle, label: "At Risk", value: "156", color: "text-red-500", bg: "from-red-500/20 to-red-500/5", desc: "Perlu perhatian" },
+                  { icon: Sparkles, label: "New", value: "351", color: "text-emerald-500", bg: "from-emerald-500/20 to-emerald-500/5", desc: "Pelanggan baru" },
+                ].map((segment, i) => (
+                  <div 
+                    key={i} 
+                    className={`glass rounded-xl p-3 sm:p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-glass-hover bg-gradient-to-br ${segment.bg}`}
+                  >
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <segment.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${segment.color}`} />
+                      <span className="text-xs sm:text-sm font-semibold">{segment.label}</span>
+                    </div>
+                    <div className={`text-xl sm:text-3xl font-bold ${segment.color}`}>{segment.value}</div>
+                    <div className="text-caption mt-1">{segment.desc}</div>
                   </div>
+                ))}
+              </div>
+
+              {/* Charts Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                {/* Revenue Chart */}
+                <div className="glass rounded-xl p-4 sm:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-5 h-5 text-primary" />
+                      <span className="text-sm sm:text-base font-semibold">Revenue Trend</span>
+                    </div>
+                    <span className="text-xs sm:text-sm font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">↑ 23%</span>
+                  </div>
+                  
                   {/* SVG Line Chart */}
-                  <div className="h-20 sm:h-28 relative" onMouseLeave={() => setHoveredPoint(null)}>
-                    <svg viewBox="0 0 280 100" className="w-full h-full" preserveAspectRatio="none">
+                  <div className="h-24 sm:h-32 relative" onMouseLeave={() => setHoveredPoint(null)}>
+                    <svg viewBox={`0 0 ${CHART.w} ${CHART.h}`} className="w-full h-full" preserveAspectRatio="none">
                       {/* Grid lines */}
-                      <line x1="0" y1="25" x2="280" y2="25" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.3" />
-                      <line x1="0" y1="50" x2="280" y2="50" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.3" />
-                      <line x1="0" y1="75" x2="280" y2="75" stroke="hsl(var(--border))" strokeWidth="0.5" strokeDasharray="4 2" opacity="0.3" />
-                      
-                      {/* Area fill under the line */}
+                      {gridYs.map((y, idx) => (
+                        <line
+                          key={idx}
+                          x1="0"
+                          y1={y}
+                          x2={CHART.w}
+                          y2={y}
+                          stroke="currentColor"
+                          className="text-border"
+                          strokeWidth="0.5"
+                          strokeDasharray="4 2"
+                          opacity="0.3"
+                        />
+                      ))}
+
+                      {/* Area fill */}
                       <defs>
                         <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#EAB308" stopOpacity="0.3" />
-                          <stop offset="100%" stopColor="#EAB308" stopOpacity="0" />
+                          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
                         </linearGradient>
                       </defs>
-                      <path
-                        d="M0,60 L23,45 L47,55 L70,30 L93,40 L117,15 L140,25 L163,10 L187,20 L210,5 L233,12 L256,8 L280,100 L0,100 Z"
-                        fill="url(#areaGradient)"
-                      />
-                      
+                      <path d={areaPath} fill="url(#areaGradient)" />
+
                       {/* Line chart path */}
                       <path
-                        d="M0,60 L23,45 L47,55 L70,30 L93,40 L117,15 L140,25 L163,10 L187,20 L210,5 L233,12 L256,8"
+                        d={linePath}
                         fill="none"
-                        stroke="#EAB308"
+                        stroke="hsl(var(--primary))"
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
-                      
+
                       {/* Interactive data points */}
-                      {revenueData.map((point, i) => (
+                      {points.map((point, i) => (
                         <g key={i}>
-                          {/* Larger invisible hit area for easier hovering */}
                           <circle
                             cx={point.x}
                             cy={point.y}
@@ -280,81 +321,91 @@ const Landing = () => {
                             className="cursor-pointer"
                             onMouseEnter={() => setHoveredPoint(i)}
                           />
-                          {/* Visible point */}
                           <circle
                             cx={point.x}
                             cy={point.y}
-                            r={hoveredPoint === i ? 5 : 3}
-                            fill="#EAB308"
-                            stroke={hoveredPoint === i ? "#fff" : "none"}
+                            r={hoveredPoint === i ? 6 : 3}
+                            fill="hsl(var(--primary))"
+                            stroke={hoveredPoint === i ? "white" : "none"}
                             strokeWidth="2"
                             className="transition-all duration-200 pointer-events-none"
                           />
                         </g>
                       ))}
                     </svg>
-                    
+
                     {/* Tooltip */}
                     {hoveredPoint !== null && (
-                      <div 
-                        className="absolute z-10 bg-card border-2 border-border shadow-brutal px-2 py-1 pointer-events-none transform -translate-x-1/2 -translate-y-full"
+                      <div
+                        className="absolute z-10 glass rounded-lg px-3 py-2 pointer-events-none transform -translate-x-1/2 -translate-y-full"
                         style={{
-                          left: `${(revenueData[hoveredPoint].x / 280) * 100}%`,
-                          top: `${(revenueData[hoveredPoint].y / 100) * 100}%`,
-                          marginTop: '-8px'
+                          left: `${(points[hoveredPoint].x / CHART.w) * 100}%`,
+                          top: `${(points[hoveredPoint].y / CHART.h) * 100}%`,
+                          marginTop: "-10px",
                         }}
                       >
-                        <div className="text-[9px] sm:text-[11px] font-brutal text-foreground">{revenueData[hoveredPoint].month}</div>
-                        <div className="text-[8px] sm:text-[10px] font-mono text-secondary">Rp {revenueData[hoveredPoint].revenue} Jt</div>
+                        <div className="text-xs sm:text-sm font-semibold">
+                          {points[hoveredPoint].month}
+                        </div>
+                        <div className="text-xs text-primary">
+                          Rp {points[hoveredPoint].revenue} Jt
+                        </div>
                       </div>
                     )}
-                    
+
                     {/* Month labels */}
-                    <div className="absolute bottom-0 left-0 right-0 flex justify-between px-0">
-                      {revenueData.map((data, i) => (
-                        <span 
-                          key={i} 
-                          className={`text-[5px] sm:text-[7px] font-mono transition-all duration-200 ${hoveredPoint === i ? 'opacity-100 text-secondary font-bold' : 'opacity-50'}`}
+                    <div className="absolute inset-x-0 bottom-0 h-4 pointer-events-none">
+                      {points.map((p, i) => (
+                        <span
+                          key={i}
+                          className={`absolute bottom-0 -translate-x-1/2 text-[6px] sm:text-[8px] transition-all duration-200 ${hoveredPoint === i ? "opacity-100 text-primary font-semibold" : "text-muted-foreground opacity-60"}`}
+                          style={{ left: `${(p.x / CHART.w) * 100}%` }}
                         >
-                          {data.month}
+                          {p.month}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <div className="mt-2 pt-2 border-t border-border/50">
-                    <div className="text-[8px] sm:text-[10px] font-mono opacity-60">Total Revenue 2024</div>
-                    <div className="text-sm sm:text-lg font-brutal">Rp 847.5 Juta</div>
+                  
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <div className="text-caption">Total Revenue 2024</div>
+                    <div className="text-lg sm:text-2xl font-bold gradient-text">Rp 847.5 Juta</div>
                   </div>
                 </div>
 
                 {/* Action Insights */}
-                <div className="border-2 border-border p-3 sm:p-4 bg-background">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Target className="w-4 h-4 text-accent" />
-                    <span className="text-[10px] sm:text-xs font-brutal">REKOMENDASI</span>
+                <div className="glass rounded-xl p-4 sm:p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Target className="w-5 h-5 text-accent" />
+                    <span className="text-sm sm:text-base font-semibold">Rekomendasi</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="p-2 bg-accent/10 border border-accent/30">
-                      <div className="text-[9px] sm:text-[11px] font-brutal text-accent">🎯 Champions</div>
-                      <div className="text-[8px] sm:text-[10px] font-mono opacity-80">Berikan reward eksklusif</div>
-                    </div>
-                    <div className="p-2 bg-destructive/10 border border-destructive/30">
-                      <div className="text-[9px] sm:text-[11px] font-brutal text-destructive">⚠️ At Risk</div>
-                      <div className="text-[8px] sm:text-[10px] font-mono opacity-80">Kirim promo win-back</div>
-                    </div>
-                    <div className="p-2 bg-green-500/10 border border-green-500/30">
-                      <div className="text-[9px] sm:text-[11px] font-brutal text-green-500">✨ New Customers</div>
-                      <div className="text-[8px] sm:text-[10px] font-mono opacity-80">Onboarding campaign</div>
-                    </div>
+                  <div className="space-y-3">
+                    {[
+                      { emoji: "🎯", label: "Champions", action: "Berikan reward eksklusif", color: "amber" },
+                      { emoji: "⚠️", label: "At Risk", action: "Kirim promo win-back", color: "red" },
+                      { emoji: "✨", label: "New Customers", action: "Onboarding campaign", color: "emerald" },
+                    ].map((item, i) => (
+                      <div 
+                        key={i} 
+                        className={`p-3 sm:p-4 rounded-xl bg-${item.color}-500/10 border border-${item.color}-500/20 transition-all duration-300 hover:-translate-y-0.5`}
+                      >
+                        <div className={`text-xs sm:text-sm font-semibold text-${item.color}-500`}>
+                          {item.emoji} {item.label}
+                        </div>
+                        <div className="text-xs sm:text-sm text-muted-foreground mt-1">{item.action}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Bottom CTA inside dashboard */}
-              <div className="mt-4 p-3 bg-secondary/20 border-2 border-secondary text-center">
-                <div className="text-[10px] sm:text-sm font-mono mb-1">Upload data transaksi Anda dan dapatkan insight seperti ini!</div>
-                <div className="flex items-center justify-center gap-1 text-[9px] sm:text-xs font-brutal text-secondary-foreground">
-                  <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
+              {/* Bottom CTA */}
+              <div className="mt-6 p-4 sm:p-5 glass rounded-xl text-center bg-gradient-to-r from-primary/5 to-secondary/5">
+                <div className="text-sm sm:text-base font-medium mb-2">
+                  Upload data transaksi Anda dan dapatkan insight seperti ini!
+                </div>
+                <div className="flex items-center justify-center gap-2 text-caption">
+                  <Upload className="w-4 h-4" />
                   <span>Format: CSV dengan kolom customer_id, transaction_date, amount</span>
                 </div>
               </div>
@@ -364,47 +415,48 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-8 sm:py-20 border-t-3 border-border">
+      <section className="py-12 sm:py-24 relative z-10">
         <div className="px-4 sm:px-6">
-          <div className="text-center mb-6 sm:mb-16">
-            <h2 className="text-xl sm:text-4xl md:text-6xl font-brutal mb-2 sm:mb-4">
-              KEUNGGULAN
+          <div className="text-center mb-8 sm:mb-16 animate-fade-in">
+            <h2 className="text-headline mb-3 sm:mb-4">
+              <span className="gradient-text">Keunggulan</span> Platform Kami
             </h2>
-            <div className="inline-block bg-accent text-accent-foreground px-2 sm:px-4 py-0.5 sm:py-1 rotate-1 border-3 border-border shadow-brutal">
-              <span className="font-mono text-[10px] sm:text-base">PLATFORM KAMI</span>
-            </div>
+            <p className="text-body-lg text-muted-foreground max-w-2xl mx-auto">
+              Solusi lengkap untuk memahami pelanggan Anda lebih baik
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:gap-6 md:grid-cols-3 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 gap-4 sm:gap-8 md:grid-cols-3 max-w-6xl mx-auto">
             {[
               {
                 icon: Target,
-                title: "SEGMENTASI OTOMATIS",
+                title: "Segmentasi Otomatis",
                 description: "Algoritma canggih mengelompokkan pelanggan berdasarkan perilaku transaksi.",
-                highlight: "bg-secondary",
+                gradient: "from-primary to-blue-400",
               },
               {
                 icon: Zap,
-                title: "INSIGHT SIAP PAKAI",
+                title: "Insight Siap Pakai",
                 description: "Rekomendasi strategi marketing langsung dari data Anda.",
-                highlight: "bg-accent text-accent-foreground",
+                gradient: "from-secondary to-purple-400",
               },
               {
                 icon: TrendingUp,
-                title: "MUDAH DIGUNAKAN",
+                title: "Mudah Digunakan",
                 description: "Upload CSV, lihat hasil. Tidak perlu keahlian data science.",
-                highlight: "bg-foreground text-background",
+                gradient: "from-accent to-pink-400",
               },
             ].map((feature, i) => (
               <div
                 key={i}
-                className="border-3 border-border p-4 sm:p-8 bg-card shadow-brutal hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal-lg transition-all group"
+                className="glass-card p-6 sm:p-10 glass-hover group animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.1}s` }}
               >
-                <div className={`w-10 h-10 sm:w-16 sm:h-16 ${feature.highlight} border-3 border-border flex items-center justify-center mb-3 sm:mb-6 group-hover:rotate-6 transition-transform`}>
-                  <feature.icon className="w-5 h-5 sm:w-8 sm:h-8" />
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
-                <h3 className="text-sm sm:text-xl font-brutal mb-2 sm:mb-4">{feature.title}</h3>
-                <p className="font-mono text-[11px] sm:text-sm text-muted-foreground leading-relaxed">
+                <h3 className="text-title mb-2 sm:mb-4">{feature.title}</h3>
+                <p className="text-body text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
               </div>
@@ -413,21 +465,27 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer CTA - Only show when not logged in */}
+      {/* Footer CTA */}
       {!isLoggedIn && (
-        <section className="py-8 sm:py-20 border-t-3 border-border bg-foreground text-background">
+        <section className="py-12 sm:py-24 relative z-10">
           <div className="px-4 sm:px-6 text-center">
-            <h2 className="text-xl sm:text-4xl md:text-6xl font-brutal mb-4 sm:mb-8">
-              MULAI SEKARANG
-            </h2>
-            <Button
-              size="lg"
-              onClick={() => navigate("/auth")}
-              className="bg-secondary text-secondary-foreground text-xs sm:text-lg px-6 sm:px-12 py-3 sm:py-6 hover:bg-secondary/90 w-full sm:w-auto max-w-xs"
-            >
-              DAFTAR GRATIS
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
+            <div className="glass-card max-w-3xl mx-auto p-8 sm:p-16 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10">
+              <h2 className="text-headline mb-4 sm:mb-6">
+                Mulai <span className="gradient-text">Sekarang</span>
+              </h2>
+              <p className="text-body-lg text-muted-foreground mb-6 sm:mb-8 max-w-xl mx-auto">
+                Daftar gratis dan mulai analisis pelanggan Anda dalam hitungan menit
+              </p>
+              <Button
+                size="lg"
+                variant="gradient"
+                onClick={() => navigate("/auth")}
+                className="text-sm sm:text-lg px-8 sm:px-12 py-4 sm:py-6"
+              >
+                Daftar Gratis
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </section>
       )}
