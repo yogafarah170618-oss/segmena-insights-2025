@@ -20,8 +20,8 @@ export const Layout = ({ children }: LayoutProps) => {
       >
         {/* Mobile: Header bar dengan semua kontrol */}
         {isMobile && (
-          <div className="fixed top-0 left-0 right-0 z-50 h-12 bg-background/60 backdrop-blur-md flex items-center justify-end px-3 border-b border-white/20">
-            <div className="flex items-center gap-1.5">
+          <div className="fixed top-0 left-0 right-0 z-50 h-12 bg-background/60 backdrop-blur-md flex items-center justify-between px-3 border-b border-white/20">
+            <div className="flex items-center gap-2">
               <DarkModeToggle />
               <AuthButton />
             </div>
