@@ -47,7 +47,7 @@ const SidebarContent = ({ onNavClick }: { onNavClick?: () => void }) => (
 );
 
 const MobileSidebarContent = ({ onNavClick }: { onNavClick?: () => void }) => (
-  <div className="flex flex-col py-6 h-full">
+  <div className="flex flex-col py-6 h-full backdrop-blur-xl">
     {/* Logo */}
     <div className="px-4 mb-6">
       <NavLink to="/" onClick={onNavClick} className="flex items-center gap-3 group">
@@ -94,7 +94,7 @@ export const Sidebar = () => {
         </SheetTrigger>
         <SheetContent 
           side="left" 
-          className="w-64 p-0 border-r-3 border-border bg-card z-[70]"
+          className="w-64 p-0 z-[70] backdrop-blur-xl border-r border-white/30 bg-white/70 dark:bg-slate-900/70"
         >
           <MobileSidebarContent onNavClick={() => setOpen(false)} />
         </SheetContent>
