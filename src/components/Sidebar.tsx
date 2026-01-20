@@ -3,6 +3,7 @@ import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import segmenaLogo from "@/assets/segmena-logo.png";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button"; // TAMBAHKAN INI
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 
