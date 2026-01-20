@@ -92,9 +92,10 @@ export const Sidebar = () => {
         <SheetTrigger asChild>
           <Button 
             variant="outline"
-            className="fixed top-3 left-3 z-[60] w-11 h-11 rounded-xl bg-background border-2 border-border shadow-lg flex items-center justify-center hover:bg-accent transition-all duration-300 p-0"
+            size="icon"
+            className="fixed top-3 left-3 z-[60] w-11 h-11 rounded-xl bg-background border-2 border-border shadow-lg hover:bg-accent transition-all duration-300"
           >
-            <Menu className="w-5 h-5 text-foreground" />
+            <Menu className="w-[18px] h-[18px] text-foreground" />
           </Button>
         </SheetTrigger>
         <SheetContent 
