@@ -238,76 +238,83 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center dotted-bg">
-        <div className="w-12 h-12 border-3 border-border bg-card flex items-center justify-center shadow-brutal">
-          <Loader2 className="h-6 w-6 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center relative">
+        <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+        <div className="w-12 h-12 rounded-xl glass-card flex items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8 space-y-6 relative">
+      {/* Background Decorations */}
+      <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+      <div className="blur-orb blur-orb-accent w-80 h-80 bottom-20 -right-40" />
+
       {/* Header */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-4 relative z-10">
         <Button
-          variant="outline"
+          variant="glass"
           size="icon"
           onClick={() => navigate("/")}
           className="flex-shrink-0"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <div className="border-3 border-border p-4 sm:p-6 bg-foreground text-background shadow-brutal flex-1">
-          <h1 className="text-2xl sm:text-4xl font-brutal mb-2">PROFIL SAYA</h1>
-          <p className="font-mono text-sm text-background/70">Kelola informasi profil Anda</p>
+        <div className="glass-card p-4 sm:p-6 flex-1 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10" />
+          <div className="relative z-10">
+            <h1 className="text-2xl sm:text-4xl font-display font-bold mb-2 gradient-text">Profil Saya</h1>
+            <p className="text-sm text-muted-foreground">Kelola informasi profil Anda</p>
+          </div>
         </div>
       </div>
 
       {/* Main Card */}
-      {/* Main Card */}
-      <div className="border-3 border-border bg-card shadow-brutal w-full">
+      <div className="glass-card max-w-2xl relative z-10">
         {/* Card Header */}
-        <div className="p-4 sm:p-6 border-b-3 border-border">
-          <h2 className="text-xl font-brutal">INFORMASI PROFIL</h2>
-          <p className="font-mono text-sm text-muted-foreground">Perbarui informasi profil Anda</p>
+        <div className="p-4 sm:p-6 border-b border-white/10">
+          <h2 className="text-xl font-display font-bold">Informasi Profil</h2>
+          <p className="text-sm text-muted-foreground">Perbarui informasi profil Anda</p>
         </div>
 
         {/* Card Content */}
         <div className="p-4 sm:p-6">
           <form onSubmit={handleSave} className="space-y-6">
             {/* Avatar Section */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
+            <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
               {/* Avatar Preview */}
               <div className="relative">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 border-3 border-border bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm border border-white/20 flex items-center justify-center flex-shrink-0 overflow-hidden">
                   {avatarUrl ? (
                     <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="font-brutal text-2xl sm:text-3xl text-secondary-foreground">
+                    <span className="font-display font-bold text-2xl sm:text-3xl text-primary">
                       {getInitials(fullName)}
                     </span>
                   )}
                   {uploading && (
-                    <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-                      <Loader2 className="h-6 w-6 animate-spin" />
+                    <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     </div>
                   )}
                 </div>
                 {avatarUrl && !uploading && (
-                  <Button
+                  <button
                     type="button"
                     onClick={handleRemoveAvatar}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground border-2 border-border flex items-center justify-center hover:bg-destructive/90 transition-colors"
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/90 transition-colors"
                   >
                     <X className="h-3 w-3" />
-                  </Button>
+                  </button>
                 )}
               </div>
               
               {/* Avatar Upload */}
               <div className="space-y-3 flex-1 w-full">
-                <Label className="font-brutal text-xs tracking-wider">FOTO PROFIL</Label>
+                <Label className="text-xs tracking-wider text-muted-foreground">FOTO PROFIL</Label>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -321,16 +328,16 @@ const Profile = () => {
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading || saving}
-                  className="w-fit px-4 h-5 ml-4"
+                  className="w-full sm:w-auto"
                 >
                   {uploading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
                     <Upload className="mr-2 h-4 w-4" />
                   )}
-                  {uploading ? "MENGUPLOAD..." : "PILIH FOTO"}
+                  {uploading ? "Mengupload..." : "Pilih Foto"}
                 </Button>
-                <p className="text-xs font-mono text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Format: JPG, PNG, GIF, WEBP. Maks 2MB.
                 </p>
               </div>
@@ -338,23 +345,23 @@ const Profile = () => {
 
             {/* Email Field */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="font-brutal text-xs tracking-wider">EMAIL</Label>
+              <Label htmlFor="email" className="text-xs tracking-wider text-muted-foreground">EMAIL</Label>
               <Input
                 id="email"
                 type="email"
                 value={userData?.email || ""}
                 disabled
-                className="bg-muted cursor-not-allowed"
+                className="bg-white/5 cursor-not-allowed"
               />
-              <p className="text-xs font-mono text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Email tidak dapat diubah
               </p>
             </div>
 
             {/* Full Name Field */}
             <div className="space-y-2">
-              <Label htmlFor="fullName" className="font-brutal text-xs tracking-wider">
-                NAMA LENGKAP <span className="text-muted-foreground">(OPSIONAL)</span>
+              <Label htmlFor="fullName" className="text-xs tracking-wider text-muted-foreground">
+                NAMA LENGKAP <span className="opacity-50">(OPSIONAL)</span>
               </Label>
               <Input
                 id="fullName"
@@ -364,16 +371,16 @@ const Profile = () => {
                 onChange={(e) => setFullName(e.target.value)}
                 disabled={saving}
               />
-              <p className="text-xs font-mono text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Nama akan ditampilkan di profil Anda
               </p>
             </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button type="submit" disabled={saving || uploading} className="w-full sm:w-auto">
+              <Button type="submit" variant="gradient" disabled={saving || uploading} className="w-full sm:w-auto">
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                SIMPAN
+                Simpan
               </Button>
               <Button
                 type="button"
@@ -382,7 +389,7 @@ const Profile = () => {
                 disabled={saving || uploading}
                 className="w-full sm:w-auto"
               >
-                BATAL
+                Batal
               </Button>
             </div>
           </form>

@@ -53,8 +53,8 @@ const Dashboard = () => {
         setMetrics({
           totalCustomers: 1247,
           totalTransactions: 3842,
-          avgSpend: 247000,
-          totalRevenue: 308149000,
+          avgSpend: 679000,
+          totalRevenue: 847500000,
         });
 
         setSegments([
@@ -66,12 +66,18 @@ const Dashboard = () => {
         ]);
 
         setRevenueData([
-          { date: 'Jun 2024', revenue: 45000000, transactions: 580 },
-          { date: 'Jul 2024', revenue: 48500000, transactions: 620 },
-          { date: 'Aug 2024', revenue: 52000000, transactions: 670 },
-          { date: 'Sep 2024', revenue: 49800000, transactions: 640 },
-          { date: 'Oct 2024', revenue: 54200000, transactions: 695 },
-          { date: 'Nov 2024', revenue: 58600000, transactions: 737 },
+          { date: 'Jan', revenue: 58500000, transactions: 520 },
+          { date: 'Feb', revenue: 62000000, transactions: 560 },
+          { date: 'Mar', revenue: 68500000, transactions: 610 },
+          { date: 'Apr', revenue: 71000000, transactions: 640 },
+          { date: 'Mei', revenue: 69500000, transactions: 620 },
+          { date: 'Jun', revenue: 72000000, transactions: 670 },
+          { date: 'Jul', revenue: 74500000, transactions: 695 },
+          { date: 'Agu', revenue: 78000000, transactions: 720 },
+          { date: 'Sep', revenue: 75500000, transactions: 700 },
+          { date: 'Okt', revenue: 79000000, transactions: 740 },
+          { date: 'Nov', revenue: 68500000, transactions: 630 },
+          { date: 'Des', revenue: 70500000, transactions: 660 },
         ]);
 
         setCustomerGrowthData([
@@ -251,26 +257,16 @@ const Dashboard = () => {
     }).format(amount);
   };
 
-  const getSegmentStyle = (segmentName: string, index: number) => {
-    const styles = [
-      'bg-foreground text-background',
-      'bg-secondary text-secondary-foreground',
-      'bg-accent text-accent-foreground',
-      'bg-card',
-    ];
-    return styles[index % styles.length];
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen p-4 sm:p-8 space-y-4 sm:space-y-8">
-        <div className="border-3 border-border p-3 sm:p-4 bg-muted">
-          <Skeleton className="h-8 sm:h-12 w-1/2 sm:w-1/3 bg-border" />
+        <div className="glass-card p-3 sm:p-4">
+          <Skeleton className="h-8 sm:h-12 w-1/2 sm:w-1/3 bg-white/10" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-          <Skeleton className="h-24 sm:h-32 border-3 border-border" />
-          <Skeleton className="h-24 sm:h-32 border-3 border-border" />
-          <Skeleton className="h-24 sm:h-32 border-3 border-border" />
+          <Skeleton className="h-24 sm:h-32 glass-card" />
+          <Skeleton className="h-24 sm:h-32 glass-card" />
+          <Skeleton className="h-24 sm:h-32 glass-card" />
         </div>
       </div>
     );
@@ -278,17 +274,21 @@ const Dashboard = () => {
 
   if (metrics.totalCustomers === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 dotted-bg">
-        <div className="border-3 border-border p-6 sm:p-12 bg-card shadow-brutal-lg text-center max-w-md mx-4">
-          <div className="w-14 h-14 sm:w-20 sm:h-20 border-3 border-border bg-secondary flex items-center justify-center mx-auto mb-4 sm:mb-6">
-            <ShoppingCart className="w-7 h-7 sm:w-10 sm:h-10" />
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 relative">
+        {/* Background Decorations */}
+        <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+        <div className="blur-orb blur-orb-accent w-80 h-80 bottom-20 -right-40" />
+        
+        <div className="glass-card p-6 sm:p-12 text-center max-w-md mx-4 relative z-10">
+          <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm border border-white/20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <ShoppingCart className="w-7 h-7 sm:w-10 sm:h-10 text-primary" />
           </div>
-          <h2 className="text-xl sm:text-3xl font-brutal mb-2 sm:mb-4">BELUM ADA DATA</h2>
-          <p className="font-mono text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-8">
+          <h2 className="text-xl sm:text-3xl font-display font-bold mb-2 sm:mb-4">Belum Ada Data</h2>
+          <p className="text-sm text-muted-foreground mb-4 sm:mb-8">
             Upload file CSV transaksi pelanggan untuk mulai analisis
           </p>
-          <Button onClick={() => navigate("/upload")} size="lg" className="w-full sm:w-auto">
-            UPLOAD DATA
+          <Button onClick={() => navigate("/upload")} size="lg" variant="gradient" className="w-full sm:w-auto">
+            Upload Data
           </Button>
         </div>
       </div>
@@ -296,87 +296,105 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen p-3 sm:p-4 md:p-8 space-y-4 sm:space-y-6 md:space-y-8 overflow-x-hidden">
+    <div className="min-h-screen p-3 sm:p-4 md:p-8 space-y-4 sm:space-y-6 md:space-y-8 overflow-x-hidden relative">
+      {/* Background Decorations */}
+      <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+      <div className="blur-orb blur-orb-accent w-80 h-80 top-1/2 -right-40" />
+      <div className="blur-orb blur-orb-secondary w-72 h-72 bottom-20 left-1/4" />
+
       {/* Header */}
-      <div className="border-3 border-border p-4 sm:p-6 bg-foreground text-background shadow-brutal">
-        <h1 className="text-2xl sm:text-4xl md:text-5xl font-brutal mb-1 sm:mb-2">
-          ANALYTICS DASHBOARD
-        </h1>
-        <p className="font-mono text-xs sm:text-sm text-background/70">Real-time customer intelligence insights</p>
+      <div className="glass-card p-4 sm:p-6 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10" />
+        <div className="relative z-10">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-display font-bold mb-1 sm:mb-2 gradient-text">
+            Analytics Dashboard
+          </h1>
+          <p className="text-sm text-muted-foreground">Real-time customer intelligence insights</p>
+        </div>
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 relative z-10">
         {[
-          { icon: Users, label: "TOTAL CUSTOMERS", value: metrics.totalCustomers.toLocaleString(), style: 'bg-card' },
-          { icon: ShoppingCart, label: "TOTAL TRANSACTIONS", value: metrics.totalTransactions.toLocaleString(), style: 'bg-secondary text-secondary-foreground' },
-          { icon: TrendingUp, label: "AVG. SPEND", value: formatCurrency(metrics.avgSpend), style: 'bg-card' },
+          { icon: Users, label: "Total Customers", value: metrics.totalCustomers.toLocaleString(), gradient: 'from-primary/20 to-primary/5' },
+          { icon: ShoppingCart, label: "Total Transactions", value: metrics.totalTransactions.toLocaleString(), gradient: 'from-accent/20 to-accent/5' },
+          { icon: TrendingUp, label: "Avg. Spend", value: formatCurrency(metrics.avgSpend), gradient: 'from-secondary/20 to-secondary/5' },
         ].map((metric, i) => (
           <div 
             key={i} 
-            className={`border-3 border-border p-4 sm:p-6 shadow-brutal hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal-hover transition-all ${metric.style}`}
+            className="glass-card glass-hover p-4 sm:p-6 relative overflow-hidden group"
           >
-            <div className="flex items-start justify-between mb-2 sm:mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 border-3 border-current flex items-center justify-center">
-                <metric.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+            <div className={`absolute inset-0 bg-gradient-to-br ${metric.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-2 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                  <metric.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                </div>
               </div>
+              <div className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-1">{metric.value}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">{metric.label}</div>
             </div>
-            <div className="text-xl sm:text-2xl md:text-3xl font-brutal mb-1">{metric.value}</div>
-            <div className="text-[10px] sm:text-xs font-mono opacity-70">{metric.label}</div>
           </div>
         ))}
       </div>
 
       {/* Segments Grid */}
-      <div>
+      <div className="relative z-10">
         <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-brutal whitespace-nowrap">CUSTOMER SEGMENTS</h2>
-          <div className="flex-1 h-0.5 sm:h-1 bg-border"></div>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold whitespace-nowrap">Customer Segments</h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent"></div>
         </div>
         <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {segments.map((segment, i) => (
             <div
               key={i}
-              className={`border-3 border-border p-4 sm:p-6 shadow-brutal cursor-pointer hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal-lg transition-all ${getSegmentStyle(segment.segment_name, i)}`}
+              className="glass-card glass-hover p-4 sm:p-6 cursor-pointer group"
               onClick={() => navigate(`/segments?segment=${segment.segment_name}`)}
             >
               <div className="flex items-center justify-between mb-2 sm:mb-4">
-                <Target className="w-5 h-5 sm:w-6 sm:h-6" />
-                <div className="text-lg sm:text-2xl font-brutal">{segment.percentage.toFixed(0)}%</div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                  <Target className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-lg sm:text-2xl font-display font-bold text-primary">{segment.percentage.toFixed(0)}%</div>
               </div>
-              <h3 className="text-sm sm:text-lg font-brutal mb-2 sm:mb-4">{segment.segment_name.toUpperCase()}</h3>
-              <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm font-mono">
+              <h3 className="text-sm sm:text-lg font-display font-semibold mb-2 sm:mb-4">{segment.segment_name}</h3>
+              <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
                 <div className="flex justify-between">
-                  <span className="opacity-70">Customers:</span>
-                  <span className="font-bold">{segment.customer_count}</span>
+                  <span className="text-muted-foreground">Customers:</span>
+                  <span className="font-semibold">{segment.customer_count}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="opacity-70">Avg Spend:</span>
-                  <span className="font-bold text-[10px] sm:text-sm">{formatCurrency(segment.avg_spend)}</span>
+                  <span className="text-muted-foreground">Avg Spend:</span>
+                  <span className="font-semibold text-[10px] sm:text-sm">{formatCurrency(segment.avg_spend)}</span>
                 </div>
               </div>
-              <div className="h-1.5 sm:h-2 bg-current mt-3 sm:mt-4 opacity-30"></div>
+              <div className="h-1 sm:h-1.5 bg-gradient-to-r from-primary to-accent rounded-full mt-3 sm:mt-4 opacity-50 group-hover:opacity-100 transition-opacity"></div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Total Revenue Card */}
-      <div className="border-3 border-border p-4 sm:p-6 md:p-8 bg-foreground text-background shadow-brutal-lg">
-        <h2 className="text-sm sm:text-lg md:text-xl font-brutal mb-1 sm:mb-2">TOTAL REVENUE</h2>
-        <div className="text-2xl sm:text-3xl md:text-5xl font-brutal break-all sm:break-normal">
-          {formatCurrency(metrics.totalRevenue)}
+      <div className="glass-card p-4 sm:p-6 md:p-8 relative overflow-hidden z-10">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-secondary/10" />
+        <div className="relative z-10">
+          <h2 className="text-sm sm:text-lg md:text-xl font-display font-semibold mb-1 sm:mb-2 text-muted-foreground">Total Revenue</h2>
+          <div className="text-2xl sm:text-3xl md:text-5xl font-display font-bold gradient-text break-all sm:break-normal">
+            {formatCurrency(metrics.totalRevenue)}
+          </div>
         </div>
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 relative z-10">
         <RevenueChart data={revenueData} />
         <CustomerGrowthChart data={customerGrowthData} />
       </div>
 
       {segmentPieData.length > 0 && (
-        <SegmentPieChart data={segmentPieData} />
+        <div className="relative z-10">
+          <SegmentPieChart data={segmentPieData} />
+        </div>
       )}
     </div>
   );

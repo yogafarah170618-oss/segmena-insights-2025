@@ -93,22 +93,29 @@ const Upload = () => {
       navigate("/dashboard");
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error(error.message || "Gagal memproses file. Pastikan format CSV sesuai.");
+      toast.error("Gagal Memuat data", {
+        description: "Data tidak bisa diproses. Pastikan format CSV sesuai dengan ketentuan."
+      });
     } finally {
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-3 sm:p-6 dotted-bg overflow-x-hidden">
-      <div className="max-w-4xl w-full space-y-4 sm:space-y-8">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-6 overflow-x-hidden relative">
+      {/* Background Decorations */}
+      <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+      <div className="blur-orb blur-orb-accent w-80 h-80 bottom-20 -right-40" />
+      <div className="blur-orb blur-orb-secondary w-72 h-72 top-1/2 left-1/3" />
+
+      <div className="max-w-4xl w-full space-y-4 sm:space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center px-2">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-brutal mb-2 sm:mb-4">UPLOAD DATA</h1>
-          <div className="inline-block bg-secondary px-3 sm:px-4 py-1 border-3 border-border shadow-brutal rotate-1">
-            <span className="font-mono text-secondary-foreground text-xs sm:text-sm">CUSTOMER TRANSACTIONS</span>
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-display font-bold mb-2 sm:mb-4 gradient-text">Upload Data</h1>
+          <div className="inline-block soft-badge px-3 sm:px-4 py-1.5 rotate-1">
+            <span className="text-xs sm:text-sm font-medium">Customer Transactions</span>
           </div>
-          <p className="font-mono text-xs sm:text-sm text-muted-foreground mt-3 sm:mt-6 max-w-xl mx-auto">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-3 sm:mt-6 max-w-xl mx-auto">
             Upload transaksi pelanggan dalam format CSV untuk mendapatkan insight mendalam
           </p>
         </div>
@@ -118,18 +125,18 @@ const Upload = () => {
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`border-3 border-border bg-card shadow-brutal p-6 sm:p-12 transition-all mx-1 sm:mx-0 ${
-            isDragging ? "translate-x-[-2px] translate-y-[-2px] shadow-brutal-lg bg-secondary/10" : ""
+          className={`glass-card p-6 sm:p-12 transition-all mx-1 sm:mx-0 ${
+            isDragging ? "scale-[1.02] border-primary/50 shadow-glow" : ""
           }`}
         >
           <div className="text-center">
             {!file ? (
               <>
-                <div className="w-16 h-16 sm:w-24 sm:h-24 border-3 border-border bg-foreground text-background flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <UploadIcon className="w-8 h-8 sm:w-12 sm:h-12" />
+                <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm border border-white/20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                  <UploadIcon className="w-8 h-8 sm:w-12 sm:h-12 text-primary" />
                 </div>
-                <h3 className="text-lg sm:text-2xl font-brutal mb-1 sm:mb-2">DROP YOUR CSV FILE HERE</h3>
-                <p className="font-mono text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-8">or tap to browse</p>
+                <h3 className="text-lg sm:text-2xl font-display font-bold mb-1 sm:mb-2">Drop Your CSV File Here</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-8">or tap to browse</p>
                 <input
                   type="file"
                   accept=".csv"
@@ -138,33 +145,33 @@ const Upload = () => {
                   id="file-upload"
                 />
                 <label htmlFor="file-upload">
-                  <Button asChild className="text-sm sm:text-base">
-                    <span>BROWSE FILES</span>
+                  <Button asChild variant="gradient" className="text-sm sm:text-base">
+                    <span>Browse Files</span>
                   </Button>
                 </label>
               </>
             ) : (
               <div className="space-y-4 sm:space-y-6">
-                <div className="w-16 h-16 sm:w-24 sm:h-24 border-3 border-border bg-secondary flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-8 h-8 sm:w-12 sm:h-12 text-secondary-foreground" />
+                <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-white/20 flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-8 h-8 sm:w-12 sm:h-12 text-green-500" />
                 </div>
-                <div className="border-3 border-border p-3 sm:p-4 flex items-center justify-between bg-card gap-2">
+                <div className="glass-card p-3 sm:p-4 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-3 border-border flex items-center justify-center flex-shrink-0">
-                      <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center flex-shrink-0">
+                      <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
                     <div className="text-left min-w-0">
-                      <div className="font-brutal text-sm sm:text-base truncate">{file.name}</div>
-                      <div className="text-xs sm:text-sm font-mono text-muted-foreground">
+                      <div className="font-display font-semibold text-sm sm:text-base truncate">{file.name}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">
                         {(file.size / 1024).toFixed(2)} KB
                       </div>
                     </div>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
                     onClick={() => setFile(null)}
-                    className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12"
+                    className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl hover:bg-destructive/10 hover:text-destructive"
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -175,46 +182,46 @@ const Upload = () => {
         </div>
 
         {/* Format Info */}
-        <div className="border-3 border-border bg-card shadow-brutal p-4 sm:p-8 mx-1 sm:mx-0">
-          <h3 className="text-base sm:text-xl font-brutal mb-4 sm:mb-6 pb-3 sm:pb-4 border-b-3 border-border">FORMAT DATA YANG DIPERLUKAN</h3>
-          <div className="space-y-3 sm:space-y-4 font-mono text-xs sm:text-sm">
+        <div className="glass-card p-4 sm:p-8 mx-1 sm:mx-0">
+          <h3 className="text-base sm:text-xl font-display font-bold mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-white/10">Format Data yang Diperlukan</h3>
+          <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm">
             <div className="flex items-start gap-2 sm:gap-4">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-foreground text-background flex items-center justify-center text-[10px] sm:text-xs font-brutal flex-shrink-0">1</div>
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center text-[10px] sm:text-xs font-bold flex-shrink-0">1</div>
               <div className="flex flex-wrap items-center gap-1">
-                <strong className="font-brutal">customer_id:</strong>
+                <strong className="font-semibold">customer_id:</strong>
                 <span className="text-muted-foreground">ID unik</span>
-                <span className="bg-accent text-accent-foreground px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs">WAJIB</span>
+                <span className="soft-badge px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs bg-primary/10 text-primary">WAJIB</span>
               </div>
             </div>
             <div className="flex items-start gap-2 sm:gap-4">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-foreground text-background flex items-center justify-center text-[10px] sm:text-xs font-brutal flex-shrink-0">2</div>
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center text-[10px] sm:text-xs font-bold flex-shrink-0">2</div>
               <div className="flex flex-wrap items-center gap-1">
-                <strong className="font-brutal">transaction_date:</strong>
+                <strong className="font-semibold">transaction_date:</strong>
                 <span className="text-muted-foreground hidden sm:inline">(YYYY-MM-DD)</span>
-                <span className="bg-accent text-accent-foreground px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs">WAJIB</span>
+                <span className="soft-badge px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs bg-primary/10 text-primary">WAJIB</span>
               </div>
             </div>
             <div className="flex items-start gap-2 sm:gap-4">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-foreground text-background flex items-center justify-center text-[10px] sm:text-xs font-brutal flex-shrink-0">3</div>
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center text-[10px] sm:text-xs font-bold flex-shrink-0">3</div>
               <div className="flex flex-wrap items-center gap-1">
-                <strong className="font-brutal">transaction_amount:</strong>
+                <strong className="font-semibold">transaction_amount:</strong>
                 <span className="text-muted-foreground hidden sm:inline">(angka)</span>
-                <span className="bg-accent text-accent-foreground px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs">WAJIB</span>
+                <span className="soft-badge px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs bg-primary/10 text-primary">WAJIB</span>
               </div>
             </div>
             <div className="flex items-start gap-2 sm:gap-4">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-secondary text-secondary-foreground flex items-center justify-center text-[10px] sm:text-xs font-brutal flex-shrink-0">4</div>
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-white/10 flex items-center justify-center text-[10px] sm:text-xs font-bold flex-shrink-0">4</div>
               <div className="flex flex-wrap items-center gap-1">
-                <strong className="font-brutal">customer_name:</strong>
+                <strong className="font-semibold">customer_name:</strong>
                 <span className="text-muted-foreground">Nama</span>
-                <span className="bg-muted px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs">OPSIONAL</span>
+                <span className="soft-badge px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs bg-muted/50">OPSIONAL</span>
               </div>
             </div>
           </div>
           
-          <div className="mt-4 sm:mt-6 p-3 sm:p-4 border-3 border-border bg-muted overflow-x-auto">
-            <p className="text-xs sm:text-sm font-brutal mb-2 sm:mb-3">CONTOH FORMAT CSV:</p>
-            <code className="text-[10px] sm:text-xs block whitespace-pre font-mono leading-relaxed">
+          <div className="mt-4 sm:mt-6 p-3 sm:p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 overflow-x-auto">
+            <p className="text-xs sm:text-sm font-semibold mb-2 sm:mb-3">Contoh Format CSV:</p>
+            <code className="text-[10px] sm:text-xs block whitespace-pre leading-relaxed text-muted-foreground">
 customer_id,transaction_date,transaction_amount,customer_name{'\n'}
 CUST001,2024-01-15,500000,Ahmad Wijaya{'\n'}
 CUST002,2024-01-16,750000,{'\n'}
@@ -228,17 +235,18 @@ CUST003,2024-01-17,250000,Siti Nurhaliza
           <div className="text-center px-1 sm:px-0">
             <Button
               size="lg"
+              variant="gradient"
               onClick={handleProcess}
               disabled={isProcessing}
               className="text-sm sm:text-lg px-8 sm:px-12 py-4 sm:py-6 w-full sm:w-auto"
             >
               {isProcessing ? (
                 <>
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-3 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                  PROCESSING...
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                  Processing...
                 </>
               ) : (
-                "PROCESS DATA"
+                "Process Data"
               )}
             </Button>
           </div>

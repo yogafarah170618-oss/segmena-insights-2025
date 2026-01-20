@@ -381,12 +381,13 @@ const Segments = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen p-4 sm:p-8 space-y-4 sm:space-y-8">
-        <div className="border-3 border-border p-3 sm:p-4 bg-muted">
-          <Skeleton className="h-8 sm:h-12 w-1/2 sm:w-1/3 bg-border" />
+      <div className="min-h-screen p-4 sm:p-8 space-y-4 sm:space-y-8 relative">
+        <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+        <div className="glass-card p-3 sm:p-4">
+          <Skeleton className="h-8 sm:h-12 w-1/2 sm:w-1/3 bg-white/10" />
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-20 sm:h-32 border-3 border-border" />)}
+          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-20 sm:h-32 glass-card" />)}
         </div>
       </div>
     );
@@ -394,18 +395,21 @@ const Segments = () => {
 
   if (customers.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 dotted-bg">
-        <div className="border-3 border-border p-6 sm:p-12 bg-card shadow-brutal-lg text-center max-w-md mx-4">
-          <div className="w-14 h-14 sm:w-20 sm:h-20 border-3 border-border bg-muted flex items-center justify-center mx-auto mb-4 sm:mb-6">
-            <Users className="w-7 h-7 sm:w-10 sm:h-10" />
+      <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 relative">
+        <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+        <div className="blur-orb blur-orb-accent w-80 h-80 bottom-20 -right-40" />
+        
+        <div className="glass-card p-6 sm:p-12 text-center max-w-md mx-4 relative z-10">
+          <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 backdrop-blur-sm border border-white/20 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <Users className="w-7 h-7 sm:w-10 sm:h-10 text-primary" />
           </div>
-          <h2 className="text-xl sm:text-3xl font-brutal mb-2 sm:mb-4">TIDAK ADA DATA</h2>
-          <p className="font-mono text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-8">
+          <h2 className="text-xl sm:text-3xl font-display font-bold mb-2 sm:mb-4">Tidak Ada Data</h2>
+          <p className="text-sm text-muted-foreground mb-4 sm:mb-8">
             Belum ada customer di segmen {segmentName}
           </p>
-          <Button onClick={() => navigate("/dashboard")} className="w-full sm:w-auto">
+          <Button onClick={() => navigate("/dashboard")} variant="gradient" className="w-full sm:w-auto">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            KEMBALI
+            Kembali
           </Button>
         </div>
       </div>
@@ -413,11 +417,16 @@ const Segments = () => {
   }
 
   return (
-    <div className="min-h-screen p-3 sm:p-4 md:p-8 space-y-4 sm:space-y-6 md:space-y-8 overflow-x-hidden">
+    <div className="min-h-screen p-3 sm:p-4 md:p-8 space-y-4 sm:space-y-6 md:space-y-8 overflow-x-hidden relative">
+      {/* Background Decorations */}
+      <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+      <div className="blur-orb blur-orb-accent w-80 h-80 top-1/2 -right-40" />
+      <div className="blur-orb blur-orb-secondary w-72 h-72 bottom-20 left-1/4" />
+
       {/* Header */}
-      <div className="flex items-start gap-2 sm:gap-4">
+      <div className="flex items-start gap-2 sm:gap-4 relative z-10">
         <Button
-          variant="outline"
+          variant="glass"
           size="icon"
           onClick={() => navigate("/dashboard")}
           className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12"
@@ -425,72 +434,75 @@ const Segments = () => {
           <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-4xl md:text-5xl font-brutal mb-1 sm:mb-2 truncate">{segmentName.toUpperCase()}</h1>
-          <p className="font-mono text-xs sm:text-sm text-muted-foreground line-clamp-2">{getSegmentDescription(segmentName)}</p>
+          <h1 className="text-xl sm:text-4xl md:text-5xl font-display font-bold mb-1 sm:mb-2 truncate gradient-text">{segmentName}</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{getSegmentDescription(segmentName)}</p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 relative z-10">
         {[
-          { icon: Users, label: "TOTAL CUSTOMERS", value: stats.totalCustomers, style: 'bg-card' },
-          { icon: DollarSign, label: "AVG. SPEND", value: formatCurrency(stats.avgSpend), style: 'bg-secondary text-secondary-foreground' },
-          { icon: TrendingUp, label: "AVG. FREQUENCY", value: `${stats.avgFrequency.toFixed(1)}x`, style: 'bg-card' },
-          { icon: Calendar, label: "TOTAL REVENUE", value: formatCurrency(stats.totalRevenue), style: 'bg-foreground text-background' },
+          { icon: Users, label: "Total Customers", value: stats.totalCustomers, gradient: 'from-primary/20 to-primary/5' },
+          { icon: DollarSign, label: "Avg. Spend", value: formatCurrency(stats.avgSpend), gradient: 'from-accent/20 to-accent/5' },
+          { icon: TrendingUp, label: "Avg. Frequency", value: `${stats.avgFrequency.toFixed(1)}x`, gradient: 'from-secondary/20 to-secondary/5' },
+          { icon: Calendar, label: "Total Revenue", value: formatCurrency(stats.totalRevenue), gradient: 'from-primary/20 to-accent/5' },
         ].map((stat, i) => (
           <div 
             key={i} 
-            className={`border-3 border-border p-3 sm:p-6 shadow-brutal hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal-hover transition-all ${stat.style}`}
+            className="glass-card glass-hover p-3 sm:p-6 relative overflow-hidden group"
           >
-            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 border-3 border-current flex items-center justify-center">
-                <stat.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                  <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                </div>
               </div>
+              <div className="text-base sm:text-2xl font-display font-bold mb-0.5 sm:mb-1 truncate">{stat.value}</div>
+              <div className="text-[9px] sm:text-xs text-muted-foreground">{stat.label}</div>
             </div>
-            <div className="text-base sm:text-2xl font-brutal mb-0.5 sm:mb-1 truncate">{stat.value}</div>
-            <div className="text-[9px] sm:text-xs font-mono opacity-70">{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* Customers Table */}
-      <div>
+      <div className="relative z-10">
         <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-6">
-          <h2 className="text-lg sm:text-2xl font-brutal whitespace-nowrap">CUSTOMERS IN SEGMENT</h2>
-          <div className="flex-1 h-0.5 sm:h-1 bg-border"></div>
+          <h2 className="text-lg sm:text-2xl font-display font-bold whitespace-nowrap">Customers in Segment</h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent"></div>
         </div>
-        <div className="border-3 border-border bg-card shadow-brutal overflow-hidden">
+        <div className="glass-card overflow-hidden">
           {/* Mobile Card View */}
           <div className="block sm:hidden">
             {customers.map((customer, i) => (
-              <div key={i} className="p-3 border-b-3 border-border last:border-b-0">
+              <div key={i} className="p-3 border-b border-white/10 last:border-b-0">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="font-mono text-xs bg-muted px-2 py-1 border border-border truncate max-w-[140px]">
+                  <span className="text-xs bg-white/10 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/10 truncate max-w-[140px]">
                     {customer.customer_id}
                   </span>
                   <div className="flex gap-1">
-                    <span className="text-[10px] font-mono bg-foreground text-background px-1.5 py-0.5">
+                    <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">
                       R:{customer.recency_score}
                     </span>
-                    <span className="text-[10px] font-mono bg-secondary text-secondary-foreground px-1.5 py-0.5">
+                    <span className="text-[10px] bg-accent/20 text-accent-foreground px-1.5 py-0.5 rounded">
                       F:{customer.frequency_score}
                     </span>
-                    <span className="text-[10px] font-mono bg-muted px-1.5 py-0.5">
+                    <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded">
                       M:{customer.monetary_score}
                     </span>
                   </div>
                 </div>
                 {customer.customer_name && (
-                  <p className="font-mono text-sm mb-2">{customer.customer_name}</p>
+                  <p className="text-sm mb-2 font-medium">{customer.customer_name}</p>
                 )}
-                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
                     <span className="text-muted-foreground">Transactions: </span>
-                    <span className="font-bold">{customer.total_transactions}</span>
+                    <span className="font-semibold">{customer.total_transactions}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Total: </span>
-                    <span className="font-bold">{formatCurrency(customer.total_spend)}</span>
+                    <span className="font-semibold">{formatCurrency(customer.total_spend)}</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Avg: </span>
@@ -509,45 +521,45 @@ const Segments = () => {
           <div className="hidden sm:block overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b-3 border-border bg-muted">
-                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-brutal tracking-wider">CUSTOMER ID</th>
-                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-brutal tracking-wider">NAME</th>
-                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-brutal tracking-wider">TRANS</th>
-                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-brutal tracking-wider">TOTAL SPEND</th>
-                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-brutal tracking-wider hidden lg:table-cell">AVG SPEND</th>
-                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-brutal tracking-wider hidden lg:table-cell">LAST</th>
-                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-brutal tracking-wider">RFM</th>
+                <tr className="border-b border-white/10 bg-white/5">
+                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-semibold tracking-wider text-muted-foreground">CUSTOMER ID</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-semibold tracking-wider text-muted-foreground">NAME</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-semibold tracking-wider text-muted-foreground">TRANS</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-semibold tracking-wider text-muted-foreground">TOTAL SPEND</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-semibold tracking-wider text-muted-foreground hidden lg:table-cell">AVG SPEND</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-semibold tracking-wider text-muted-foreground hidden lg:table-cell">LAST</th>
+                  <th className="text-left p-3 sm:p-4 text-[10px] sm:text-xs font-semibold tracking-wider text-muted-foreground">RFM</th>
                 </tr>
               </thead>
               <tbody>
                 {customers.map((customer, i) => (
                   <tr
                     key={i}
-                    className="border-b-3 border-border hover:bg-muted/50 transition-colors"
+                    className="border-b border-white/10 hover:bg-white/5 transition-colors"
                   >
                     <td className="p-3 sm:p-4">
-                      <span className="font-mono text-xs sm:text-sm bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 border border-border">
+                      <span className="text-xs sm:text-sm bg-white/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg border border-white/10">
                         {customer.customer_id}
                       </span>
                     </td>
-                    <td className="p-3 sm:p-4 font-mono text-sm">
+                    <td className="p-3 sm:p-4 text-sm">
                       {customer.customer_name || <span className="text-muted-foreground">-</span>}
                     </td>
-                    <td className="p-3 sm:p-4 font-mono text-sm">{customer.total_transactions}</td>
-                    <td className="p-3 sm:p-4 font-mono text-sm font-bold">{formatCurrency(customer.total_spend)}</td>
-                    <td className="p-3 sm:p-4 font-mono text-sm hidden lg:table-cell">{formatCurrency(customer.avg_spend)}</td>
-                    <td className="p-3 sm:p-4 font-mono text-sm text-muted-foreground hidden lg:table-cell">
+                    <td className="p-3 sm:p-4 text-sm">{customer.total_transactions}</td>
+                    <td className="p-3 sm:p-4 text-sm font-semibold">{formatCurrency(customer.total_spend)}</td>
+                    <td className="p-3 sm:p-4 text-sm hidden lg:table-cell">{formatCurrency(customer.avg_spend)}</td>
+                    <td className="p-3 sm:p-4 text-sm text-muted-foreground hidden lg:table-cell">
                       {new Date(customer.last_transaction_date).toLocaleDateString('id-ID')}
                     </td>
                     <td className="p-3 sm:p-4">
                       <div className="flex gap-1">
-                        <span className="text-[10px] sm:text-xs font-mono bg-foreground text-background px-1.5 sm:px-2 py-0.5">
+                        <span className="text-[10px] sm:text-xs bg-primary/20 text-primary px-1.5 sm:px-2 py-0.5 rounded">
                           R:{customer.recency_score}
                         </span>
-                        <span className="text-[10px] sm:text-xs font-mono bg-secondary text-secondary-foreground px-1.5 sm:px-2 py-0.5">
+                        <span className="text-[10px] sm:text-xs bg-accent/20 px-1.5 sm:px-2 py-0.5 rounded">
                           F:{customer.frequency_score}
                         </span>
-                        <span className="text-[10px] sm:text-xs font-mono bg-muted px-1.5 sm:px-2 py-0.5">
+                        <span className="text-[10px] sm:text-xs bg-white/10 px-1.5 sm:px-2 py-0.5 rounded">
                           M:{customer.monetary_score}
                         </span>
                       </div>
@@ -561,26 +573,26 @@ const Segments = () => {
       </div>
 
       {/* Strategies */}
-      <div>
+      <div className="relative z-10">
         <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-6">
-          <h2 className="text-lg sm:text-2xl font-brutal whitespace-nowrap">RECOMMENDED STRATEGIES</h2>
-          <div className="flex-1 h-0.5 sm:h-1 bg-border"></div>
+          <h2 className="text-lg sm:text-2xl font-display font-bold whitespace-nowrap">Recommended Strategies</h2>
+          <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
           {getStrategies(segmentName).map((strategy, i) => (
             <div 
               key={i} 
-              className="border-3 border-border p-4 sm:p-6 bg-card shadow-brutal hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal-lg transition-all cursor-pointer group"
+              className="glass-card glass-hover p-4 sm:p-6 cursor-pointer group"
               onClick={() => setSelectedStrategy(getStrategyDetails(segmentName, i))}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 border-3 border-border bg-foreground text-background flex items-center justify-center mb-3 sm:mb-4 font-brutal text-base sm:text-xl">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center mb-3 sm:mb-4 font-display font-bold text-base sm:text-xl">
                     {i + 1}
                   </div>
-                  <p className="font-mono text-xs sm:text-sm text-muted-foreground leading-relaxed">{strategy}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{strategy}</p>
                 </div>
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2" />
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground group-hover:translate-x-1 group-hover:text-primary transition-all flex-shrink-0 ml-2" />
               </div>
             </div>
           ))}
@@ -589,23 +601,23 @@ const Segments = () => {
 
       {/* Strategy Detail Modal */}
       <Dialog open={!!selectedStrategy} onOpenChange={() => setSelectedStrategy(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto border-3 border-border shadow-brutal-lg mx-3 sm:mx-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto glass-card border-white/20 mx-3 sm:mx-auto">
           <DialogHeader>
-            <DialogTitle className="text-lg sm:text-2xl font-brutal">{selectedStrategy?.title.toUpperCase()}</DialogTitle>
-            <DialogDescription className="text-sm sm:text-base font-mono mt-2">
+            <DialogTitle className="text-lg sm:text-2xl font-display font-bold gradient-text">{selectedStrategy?.title}</DialogTitle>
+            <DialogDescription className="text-sm sm:text-base mt-2 text-muted-foreground">
               {selectedStrategy?.description}
             </DialogDescription>
           </DialogHeader>
           
           <div className="mt-4 sm:mt-6">
-            <h4 className="font-brutal text-xs sm:text-sm tracking-wider mb-3 sm:mb-4">CONTOH IMPLEMENTASI:</h4>
+            <h4 className="text-xs sm:text-sm tracking-wider mb-3 sm:mb-4 text-muted-foreground font-semibold">CONTOH IMPLEMENTASI:</h4>
             <ul className="space-y-2 sm:space-y-3">
               {selectedStrategy?.examples.map((example, i) => (
                 <li key={i} className="flex gap-2 sm:gap-3">
-                  <span className="w-5 h-5 sm:w-6 sm:h-6 bg-foreground text-background flex items-center justify-center text-[10px] sm:text-xs font-brutal flex-shrink-0">
+                  <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-gradient-to-br from-primary to-accent text-white flex items-center justify-center text-[10px] sm:text-xs font-bold flex-shrink-0">
                     {i + 1}
                   </span>
-                  <span className="font-mono text-xs sm:text-sm text-muted-foreground">{example}</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{example}</span>
                 </li>
               ))}
             </ul>

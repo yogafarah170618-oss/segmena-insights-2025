@@ -182,9 +182,14 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 dotted-bg overflow-x-hidden">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 overflow-x-hidden relative">
+      {/* Background Decorations */}
+      <div className="blur-orb blur-orb-primary w-96 h-96 top-20 -left-48" />
+      <div className="blur-orb blur-orb-accent w-80 h-80 bottom-20 -right-40" />
+      <div className="blur-orb blur-orb-secondary w-72 h-72 top-1/2 left-1/4" />
+
       <Button
-        variant="outline"
+        variant="glass"
         size="icon"
         className="fixed top-3 left-3 sm:top-4 sm:left-4 z-50 w-10 h-10 sm:w-12 sm:h-12"
         onClick={() => navigate("/")}
@@ -192,38 +197,38 @@ const Auth = () => {
         <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
       </Button>
 
-      <div className="w-full max-w-md px-1 sm:px-0">
+      <div className="w-full max-w-md px-1 sm:px-0 relative z-10">
         {/* Title */}
         <div className="text-center mb-4 sm:mb-8">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-brutal mb-2 sm:mb-4">SEGMENA</h1>
-          <div className="inline-block bg-secondary px-3 sm:px-4 py-1 border-3 border-border shadow-brutal -rotate-1">
-            <span className="font-mono text-secondary-foreground text-xs sm:text-sm">CUSTOMER INTELLIGENCE</span>
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-bold mb-2 sm:mb-4 gradient-text">Segmena</h1>
+          <div className="inline-block soft-badge px-3 sm:px-4 py-1.5 -rotate-1">
+            <span className="text-xs sm:text-sm font-medium">Customer Intelligence</span>
           </div>
         </div>
 
         {/* Auth Card */}
-        <div className="border-3 border-border bg-card shadow-brutal-lg">
+        <div className="glass-card overflow-hidden">
           {/* Tab Buttons */}
-          <div className="grid grid-cols-2 border-b-3 border-border">
+          <div className="grid grid-cols-2 border-b border-white/10">
             <button
               onClick={() => setActiveTab('login')}
-              className={`py-3 sm:py-4 font-brutal text-xs sm:text-sm tracking-wider transition-colors ${
+              className={`py-3 sm:py-4 font-display font-semibold text-xs sm:text-sm tracking-wider transition-all ${
                 activeTab === 'login' 
-                  ? 'bg-foreground text-background' 
-                  : 'bg-card hover:bg-muted'
+                  ? 'bg-gradient-to-r from-primary/20 to-accent/20 text-primary' 
+                  : 'text-muted-foreground hover:bg-white/5'
               }`}
             >
-              LOGIN
+              Login
             </button>
             <button
               onClick={() => setActiveTab('signup')}
-              className={`py-3 sm:py-4 font-brutal text-xs sm:text-sm tracking-wider transition-colors border-l-3 border-border ${
+              className={`py-3 sm:py-4 font-display font-semibold text-xs sm:text-sm tracking-wider transition-all border-l border-white/10 ${
                 activeTab === 'signup' 
-                  ? 'bg-foreground text-background' 
-                  : 'bg-card hover:bg-muted'
+                  ? 'bg-gradient-to-r from-primary/20 to-accent/20 text-primary' 
+                  : 'text-muted-foreground hover:bg-white/5'
               }`}
             >
-              SIGN UP
+              Sign Up
             </button>
           </div>
 
@@ -233,7 +238,7 @@ const Auth = () => {
                 {!showForgotPassword ? (
                   <form onSubmit={handleSignIn} className="space-y-3 sm:space-y-4">
                     <div className="space-y-1.5 sm:space-y-2">
-                      <Label htmlFor="login-email" className="font-brutal text-[10px] sm:text-xs tracking-wider">EMAIL</Label>
+                      <Label htmlFor="login-email" className="text-[10px] sm:text-xs tracking-wider text-muted-foreground">EMAIL</Label>
                       <Input
                         id="login-email"
                         type="email"
@@ -246,7 +251,7 @@ const Auth = () => {
                       />
                     </div>
                     <div className="space-y-1.5 sm:space-y-2">
-                      <Label htmlFor="login-password" className="font-brutal text-[10px] sm:text-xs tracking-wider">PASSWORD</Label>
+                      <Label htmlFor="login-password" className="text-[10px] sm:text-xs tracking-wider text-muted-foreground">PASSWORD</Label>
                       <div className="relative">
                         <Input
                           id="login-password"
@@ -263,33 +268,33 @@ const Auth = () => {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="absolute right-0 top-0 h-full px-3"
+                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                           onClick={() => setShowPassword(!showPassword)}
                           disabled={loading}
                         >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                         </Button>
                       </div>
                     </div>
                     <div className="flex justify-end">
                       <button
                         type="button"
-                        className="text-xs sm:text-sm font-mono underline hover:no-underline"
+                        className="text-xs sm:text-sm text-primary hover:underline"
                         onClick={() => setShowForgotPassword(true)}
                         disabled={loading}
                       >
                         Lupa password?
                       </button>
                     </div>
-                    <Button type="submit" className="w-full h-11 sm:h-12 text-sm sm:text-base" disabled={loading}>
+                    <Button type="submit" variant="gradient" className="w-full h-11 sm:h-12 text-sm sm:text-base" disabled={loading}>
                       {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      LOGIN
+                      Login
                     </Button>
                   </form>
                 ) : (
                   <form onSubmit={handleForgotPassword} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="forgot-email" className="font-brutal text-xs tracking-wider">EMAIL</Label>
+                      <Label htmlFor="forgot-email" className="text-xs tracking-wider text-muted-foreground">EMAIL</Label>
                       <Input
                         id="forgot-email"
                         type="email"
@@ -299,7 +304,7 @@ const Auth = () => {
                         required
                         disabled={loading}
                       />
-                      <p className="text-xs font-mono text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         Masukkan email Anda untuk reset password
                       </p>
                     </div>
@@ -314,11 +319,11 @@ const Auth = () => {
                         }}
                         disabled={loading}
                       >
-                        BATAL
+                        Batal
                       </Button>
-                      <Button type="submit" className="flex-1" disabled={loading}>
+                      <Button type="submit" variant="gradient" className="flex-1" disabled={loading}>
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        KIRIM
+                        Kirim
                       </Button>
                     </div>
                   </form>
@@ -329,7 +334,7 @@ const Auth = () => {
             {activeTab === 'signup' && (
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name" className="font-brutal text-xs tracking-wider">NAMA LENGKAP</Label>
+                  <Label htmlFor="signup-name" className="text-xs tracking-wider text-muted-foreground">NAMA LENGKAP</Label>
                   <Input
                     id="signup-name"
                     type="text"
@@ -341,7 +346,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="font-brutal text-xs tracking-wider">EMAIL</Label>
+                  <Label htmlFor="signup-email" className="text-xs tracking-wider text-muted-foreground">EMAIL</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -353,7 +358,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="font-brutal text-xs tracking-wider">PASSWORD</Label>
+                  <Label htmlFor="signup-password" className="text-xs tracking-wider text-muted-foreground">PASSWORD</Label>
                   <div className="relative">
                     <Input
                       id="signup-password"
@@ -370,16 +375,16 @@ const Auth = () => {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                       disabled={loading}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                     </Button>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-confirm-password" className="font-brutal text-xs tracking-wider">KONFIRMASI PASSWORD</Label>
+                  <Label htmlFor="signup-confirm-password" className="text-xs tracking-wider text-muted-foreground">KONFIRMASI PASSWORD</Label>
                   <div className="relative">
                     <Input
                       id="signup-confirm-password"
@@ -396,20 +401,20 @@ const Auth = () => {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-full px-3"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       disabled={loading}
                     >
-                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                     </Button>
                   </div>
-                  <p className="text-xs font-mono text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Minimal 6 karakter
                   </p>
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" variant="gradient" className="w-full" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  DAFTAR
+                  Daftar
                 </Button>
               </form>
             )}
