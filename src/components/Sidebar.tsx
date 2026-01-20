@@ -31,8 +31,11 @@ const SidebarContent = ({ onNavClick }: { onNavClick?: () => void }) => (
           to={item.path}
           onClick={onNavClick}
           className={cn(
-            "w-full h-12 border-3 border-border flex items-center justify-center transition-all bg-card",
-            "hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-brutal"
+            cn(
+               "w-full h-12 flex items-center justify-center rounded-xl transition-all backdrop-blur-md",
+                "bg-white/40 text-slate-600 hover:bg-white/70 hover:shadow-md",
+                "dark:bg-slate-800/40 dark:text-slate-300 dark:hover:bg-slate-800/70"
+             ) 
           )}
           activeClassName="bg-foreground text-background"
         >
