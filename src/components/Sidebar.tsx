@@ -93,14 +93,14 @@ export const Sidebar = () => {
           <Button 
             variant="outline"
             size="icon"
-            className="fixed top-1.5 left-3 z-[60] w-9 h-9 rounded-xl bg-background border-2 border-border shadow-lg hover:bg-accent transition-all duration-300"
+            className="fixed top-1.5 left-3 z-[90] w-9 h-9 rounded-xl bg-background border-2 border-border shadow-lg hover:bg-accent transition-all duration-300"
           >
             <Menu className="w-4 h-4 text-foreground" strokeWidth={2.5} />
           </Button>
         </SheetTrigger>
         <SheetContent 
           side="left" 
-          className="w-64 p-0 bg-background/80 backdrop-blur-xl border-r border-white/20 z-[70]"
+          className="w-64 p-0 bg-background/80 backdrop-blur-xl border-r border-white/20 z-[85]"
         >
           <MobileSidebarContent onNavClick={() => setOpen(false)} />
         </SheetContent>
