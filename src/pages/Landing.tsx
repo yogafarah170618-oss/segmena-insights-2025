@@ -215,20 +215,20 @@ const Landing = () => {
               </div>
               <span className="text-caption">v1.0</span>
             </div>
-            
+
             <div className="p-4 sm:p-8">
-              {/* Step indicator */}
+             {/* Step indicator */}
               <div className="mb-6 sm:mb-8 p-4 sm:p-5 glass rounded-xl">
-                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 justify-center">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 justify-center">
                   {[
                     { step: 1, label: "Upload CSV" },
                     { step: 2, label: "Analisis Otomatis" },
                     { step: 3, label: "Lihat Insight" },
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-center">
+                    <div key={i} className="flex items-center gap-2 sm:gap-3">
                       {i > 0 && <ArrowRight className="w-4 h-4 text-muted-foreground hidden sm:block" />}
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary text-white flex items-center justify-center text-sm font-semibold">
+                      <div className="flex items-center gap-2 flex-1 sm:flex-initial">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
                           {item.step}
                         </div>
                         <span className="text-sm font-medium">{item.label}</span>
