@@ -273,7 +273,7 @@ const Profile = () => {
       </div>
 
       {/* Main Card */}
-      <div className="glass-card max-w-2xl relative z-10">
+      <div className="glass-card relative z-10">
         {/* Card Header */}
         <div className="p-4 sm:p-6 border-b border-white/10">
           <h2 className="text-xl font-display font-bold">Informasi Profil</h2>
