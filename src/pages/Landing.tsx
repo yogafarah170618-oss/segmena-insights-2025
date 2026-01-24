@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Target, Zap, TrendingUp, Users, Crown, Heart, AlertTriangle, Sparkles, Upload, PieChart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+
 type RevenueDatum = {
   month: string;
   revenue: number;
 };
+
 const CHART = {
   w: 280,
   h: 100,
@@ -14,6 +16,7 @@ const CHART = {
   topY: 8,
   bottomY: 72
 } as const;
+
 const REVENUE_DATA: RevenueDatum[] = [{
   month: "Jan",
   revenue: 58.5
@@ -51,6 +54,7 @@ const REVENUE_DATA: RevenueDatum[] = [{
   month: "Des",
   revenue: 70.5
 }];
+
 const Landing = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
@@ -60,6 +64,7 @@ const Landing = () => {
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
+
   const points = useMemo(() => {
     const values = REVENUE_DATA.map(d => d.revenue);
     const min = Math.min(...values);
@@ -78,9 +83,11 @@ const Landing = () => {
       };
     });
   }, []);
+
   const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ");
   const areaPath = `${linePath} L${points[points.length - 1].x},${CHART.h} L${points[0].x},${CHART.h} Z`;
   const gridYs = [CHART.topY + (CHART.bottomY - CHART.topY) * 0.25, CHART.topY + (CHART.bottomY - CHART.topY) * 0.5, CHART.topY + (CHART.bottomY - CHART.topY) * 0.75];
+
   useEffect(() => {
     checkAuthAndLoadData();
     const {
@@ -101,6 +108,7 @@ const Landing = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
   const checkAuthAndLoadData = async () => {
     try {
       const {
@@ -139,6 +147,7 @@ const Landing = () => {
       console.error('Error loading data:', error);
     }
   };
+
   return <div className="min-h-screen text-foreground overflow-x-hidden relative">
       {/* Background decoration orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -195,7 +204,12 @@ const Landing = () => {
             label: "Avg. Transaction",
             value: stats.avgTransaction,
             color: "accent"
-          }].map((stat, i) => {})}
+          }].map((stat, i) => (
+            <div key={i} className="glass rounded-xl p-3 sm:p-4 text-center">
+              <div className="text-xs sm:text-sm text-muted-foreground mb-1">{stat.label}</div>
+              <div className="text-lg sm:text-2xl font-bold gradient-text">{stat.value}</div>
+            </div>
+          ))}
           </div>
 
           {/* Dashboard Preview */}
@@ -354,27 +368,24 @@ const Landing = () => {
                     <span className="text-sm sm:text-base font-semibold">Rekomendasi</span>
                   </div>
                   <div className="space-y-3">
-                    {[{
-                    emoji: "🎯",
-                    label: "Champions",
-                    action: "Berikan reward eksklusif",
-                    color: "amber"
-                  }, {
-                    emoji: "⚠️",
-                    label: "At Risk",
-                    action: "Kirim promo win-back",
-                    color: "red"
-                  }, {
-                    emoji: "✨",
-                    label: "New Customers",
-                    action: "Onboarding campaign",
-                    color: "emerald"
-                  }].map((item, i) => <div key={i} className={`p-3 sm:p-4 rounded-xl bg-${item.color}-500/10 border border-${item.color}-500/20 transition-all duration-300 hover:-translate-y-0.5`}>
-                        <div className={`text-xs sm:text-sm font-semibold text-${item.color}-500`}>
-                          {item.emoji} {item.label}
-                        </div>
-                        <div className="text-xs sm:text-sm text-muted-foreground mt-1">{item.action}</div>
-                      </div>)}
+                    <div className="p-3 sm:p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 transition-all duration-300 hover:-translate-y-0.5">
+                      <div className="text-xs sm:text-sm font-semibold text-amber-500">
+                        🎯 Champions
+                      </div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mt-1">Berikan reward eksklusif</div>
+                    </div>
+                    <div className="p-3 sm:p-4 rounded-xl bg-red-500/10 border border-red-500/20 transition-all duration-300 hover:-translate-y-0.5">
+                      <div className="text-xs sm:text-sm font-semibold text-red-500">
+                        ⚠️ At Risk
+                      </div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mt-1">Kirim promo win-back</div>
+                    </div>
+                    <div className="p-3 sm:p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 transition-all duration-300 hover:-translate-y-0.5">
+                      <div className="text-xs sm:text-sm font-semibold text-emerald-500">
+                        ✨ New Customers
+                      </div>
+                      <div className="text-xs sm:text-sm text-muted-foreground mt-1">Onboarding campaign</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -413,4 +424,5 @@ const Landing = () => {
         </section>}
     </div>;
 };
+
 export default Landing;
